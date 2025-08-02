@@ -12,6 +12,8 @@ import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
+import java.util.Properties;
+import java.io.InputStream;
 
 /**
  * Servlet implementation class CaretakerLoginServlet
@@ -24,9 +26,18 @@ public class CaretakerLoginServlet extends HttpServlet {
         String email = request.getParameter("email");
         String password = request.getParameter("password");
 
-        String jdbcURL = "jdbc:mysql://localhost:3306/campuscart";
-        String dbUser = "root";
-        String dbPassword = "chanjhalaA1!";
+        String jdbcURL = null;
+        String dbUser = null;
+        String dbPassword = null;
+        try (InputStream input = getServletContext().getResourceAsStream("/WEB-INF/db.properties")) {
+            Properties prop = new Properties();
+            prop.load(input);
+            jdbcURL = prop.getProperty("jdbc.url");
+            dbUser = prop.getProperty("jdbc.user");
+            dbPassword = prop.getProperty("jdbc.password");
+        } catch (Exception e) {
+            throw new ServletException("Database configuration error", e);
+        }
 
         try {
             Class.forName("com.mysql.cj.jdbc.Driver");

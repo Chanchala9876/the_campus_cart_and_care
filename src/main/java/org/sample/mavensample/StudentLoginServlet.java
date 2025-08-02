@@ -6,6 +6,8 @@ import jakarta.servlet.http.*;
 
 import java.io.IOException;
 import java.sql.*;
+import java.util.Properties;
+import java.io.InputStream;
 
 @WebServlet("/StudentLoginServlet")
 public class StudentLoginServlet extends HttpServlet {
@@ -15,10 +17,22 @@ public class StudentLoginServlet extends HttpServlet {
         String email = request.getParameter("email");
         String password = request.getParameter("password");
 
+        String jdbcURL = null;
+        String dbUser = null;
+        String dbPassword = null;
+        try (InputStream input = getServletContext().getResourceAsStream("/WEB-INF/db.properties")) {
+            Properties prop = new Properties();
+            prop.load(input);
+            jdbcURL = prop.getProperty("jdbc.url");
+            dbUser = prop.getProperty("jdbc.user");
+            dbPassword = prop.getProperty("jdbc.password");
+        } catch (Exception e) {
+            throw new ServletException("Database configuration error", e);
+        }
+
         try {
             Class.forName("com.mysql.cj.jdbc.Driver");
-            try (Connection conn = DriverManager.getConnection(
-                    "jdbc:mysql://localhost:3306/campuscart", "root", "chanjhalaA1!");
+            try (Connection conn = DriverManager.getConnection(jdbcURL, dbUser, dbPassword);
                  PreparedStatement ps = conn.prepareStatement(
                          "SELECT student_id FROM student WHERE email = ? AND password = ?")) {
 

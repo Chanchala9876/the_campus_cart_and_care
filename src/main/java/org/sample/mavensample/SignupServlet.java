@@ -12,6 +12,8 @@ import java.io.IOException;
 import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Properties;
+import java.io.InputStream;
 
 @WebServlet("/SignupServlet")
 public class SignupServlet extends HttpServlet {
@@ -41,7 +43,19 @@ public class SignupServlet extends HttpServlet {
 
         try {
             Class.forName("com.mysql.cj.jdbc.Driver");
-            conn = DriverManager.getConnection("jdbc:mysql://localhost:3306/campuscart", "root", "chanjhalaA1!");
+            String jdbcURL = null;
+            String dbUser = null;
+            String dbPassword = null;
+            try (InputStream input = getServletContext().getResourceAsStream("/WEB-INF/db.properties")) {
+                Properties prop = new Properties();
+                prop.load(input);
+                jdbcURL = prop.getProperty("jdbc.url");
+                dbUser = prop.getProperty("jdbc.user");
+                dbPassword = prop.getProperty("jdbc.password");
+            } catch (Exception e) {
+                throw new RuntimeException("Database configuration error", e);
+            }
+            conn = DriverManager.getConnection(jdbcURL, dbUser, dbPassword);
             stmt = conn.createStatement();
 
             rs = stmt.executeQuery("SELECT hostel_id, name FROM hostel WHERE type = 'hostel'");
@@ -85,7 +99,19 @@ public class SignupServlet extends HttpServlet {
 
         try {
             Class.forName("com.mysql.cj.jdbc.Driver");
-            conn = DriverManager.getConnection("jdbc:mysql://localhost:3306/campuscart", "root", "chanjhalaA1!");
+            String jdbcURL = null;
+            String dbUser = null;
+            String dbPassword = null;
+            try (InputStream input = getServletContext().getResourceAsStream("/WEB-INF/db.properties")) {
+                Properties prop = new Properties();
+                prop.load(input);
+                jdbcURL = prop.getProperty("jdbc.url");
+                dbUser = prop.getProperty("jdbc.user");
+                dbPassword = prop.getProperty("jdbc.password");
+            } catch (Exception e) {
+                throw new RuntimeException("Database configuration error", e);
+            }
+            conn = DriverManager.getConnection(jdbcURL, dbUser, dbPassword);
 
             // Insert student data
             String sql = "INSERT INTO student (name, email, password, hostel_id) VALUES (?, ?, ?, ?)";
