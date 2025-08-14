@@ -65,7 +65,7 @@ Open the browser and go to:
 bash
 Copy
 Edit
-http://localhost:8080/the_campus_cart_and_care/
+http://localhost:8086/mavensample/ThrHomePage.html
 🔒 Security Notes
 All student and caretaker logins are validated using database credentials.
 
